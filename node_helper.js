@@ -67,16 +67,19 @@ module.exports = NodeHelper.create({
   },
 
   async fetchReverseGeocode(lat, lon) {
+    Log.info("Fetching geocode")
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'YourAppName/1.0 (rgroppa@gmail.com)'
+        'User-Agent': 'MyApp/1.0 (rgroppa@gmail.com)'
       }
     });
+    Log.info(response)
     if (!response.ok) {
       throw new Error(`Reverse geocode failed: ${response.statusText}`);
     }
     const data = await response.json();
+    Log.info("Returning" + data.name || '')
     return data.name || '';
   },
 
@@ -400,6 +403,7 @@ module.exports = NodeHelper.create({
   socketNotificationReceived (notification, payload) {
     if (notification === 'IMAGE_GEO_REQUEST') {
       const { key, lat, lon } = payload;
+      Log.info("Received request for geo location")
       Log.info(payload)
       if (this.geoCache[key]) {
         Log.info("Returned cached results")
@@ -412,6 +416,7 @@ module.exports = NodeHelper.create({
       } else {
         this.fetchReverseGeocode(lat, lon)
           .then(location => {
+            Log.info("Sending geo request")
             this.geoCache[key] = location;
             this.saveCache();
             this.sendSocketNotification('IMAGE_GEO_RESULT', {
@@ -422,6 +427,7 @@ module.exports = NodeHelper.create({
             });
           })
           .catch(error => {
+            Log.info("Error with geo request" + error)
             this.sendSocketNotification('IMAGE_GEO_RESULT', {
               key,
               lat,
