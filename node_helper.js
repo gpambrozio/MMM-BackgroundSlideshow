@@ -74,13 +74,14 @@ module.exports = NodeHelper.create({
         'User-Agent': 'MyApp/1.0 (rgroppa@gmail.com)'
       }
     });
-    Log.info(response)
     if (!response.ok) {
       throw new Error(`Reverse geocode failed: ${response.statusText}`);
     }
     const data = await response.json();
-    Log.info("Returning" + data.name || '')
-    return data.name || '';
+    Log.info(data)
+    let name = data.name || data.display_name.substring(0, 24) || '';
+    Log.info("Returning " + name)
+    return name;
   },
 
   // shuffles an array at random and returns it
@@ -406,7 +407,7 @@ module.exports = NodeHelper.create({
       Log.info("Received request for geo location")
       Log.info(payload)
       if (this.geoCache[key]) {
-        Log.info("Returned cached results")
+        Log.info("Returned cached results" + this.geoCache[key])
         this.sendSocketNotification('IMAGE_GEO_RESULT', {
           key,
           lat,
