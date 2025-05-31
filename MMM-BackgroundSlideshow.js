@@ -665,10 +665,14 @@ Module.register('MMM-BackgroundSlideshow', {
     };
 
     // Now all awaits finished, safe to update the DOM
-    let innerHTML = `<header class="infoDivHeader">${this.translate('PICTURE_INFO')}</header>`;
-    imageProps.forEach((val) => {
-      innerHTML += `${val}<br/>`;
-    });
+    let innerHTML = '';
+
+    if (imageProps.length > 0) {
+      innerHTML += `<header class="infoDivHeader">${this.translate('PICTURE_INFO')}</header>`;
+      imageProps.forEach((val) => {
+        innerHTML += `${val}<br/>`;
+      });
+    }
 
     this.imageInfoDiv.innerHTML = innerHTML;
   },

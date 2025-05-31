@@ -60,7 +60,7 @@ module.exports = NodeHelper.create({
   saveCache() {
     try {
       fs.writeFileSync(this.cacheFilePath, JSON.stringify(this.geoCache, null, 2), 'utf-8');
-      Log.info('Geo cache saved');
+      Log.debug('Geo cache saved');
     } catch (e) {
       Log.warn('Failed to save geo cache:', e);
     }
