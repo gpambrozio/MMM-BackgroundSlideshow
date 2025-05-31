@@ -11,6 +11,8 @@
  * MIT Licensed.
  */
 
+const { log } = require("../../js/logger");
+
 Module.register('MMM-BackgroundSlideshow', {
   // Default module config.
   defaults: {
@@ -649,6 +651,8 @@ Module.register('MMM-BackgroundSlideshow', {
                 imageProps.push(`${location}`);
               }
               imageProps.push(`${location}`);
+            } else {
+              log.info("Image " + imageName + " did not geo location")
             }
           } catch (error) {
             Log.info(`Error fetching geo ${error.message}`);

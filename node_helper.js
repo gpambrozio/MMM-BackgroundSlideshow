@@ -79,7 +79,7 @@ module.exports = NodeHelper.create({
     }
     const data = await response.json();
     Log.debug(data)
-    let name = data.name || data.display_name.substring(0, 24) || '';
+    let name = data.name || data.neighbourhood || data. data.display_name.substring(0, 24) || '';
     Log.debug("Returning " + name)
     return name;
   },
@@ -354,7 +354,7 @@ module.exports = NodeHelper.create({
     if (this.config.resizeImages) {
       this.resizeImage(filepath, callback);
     } else {
-      Log.log('resizeImages: false');
+      Log.debug('resizeImages: false');
       // const data = FileSystemImageSlideshow.readFileSync(filepath, { encoding: 'base64' });
       // callback(`data:image/${ext};base64, ${data}`);
       const chunks = [];
@@ -370,7 +370,7 @@ module.exports = NodeHelper.create({
           Log.error('Error reading file:', err);
         })
         .on('close', () => {
-          Log.log('Stream closed.');
+          Log.debug('Stream closed.');
         });
     }
   },
@@ -407,7 +407,7 @@ module.exports = NodeHelper.create({
       Log.debug("Received request for geo location")
       Log.debug(payload)
       if (this.geoCache[key]) {
-        Log.debug("Returned cached results" + this.geoCache[key])
+        Log.debug("Returned cached results " + this.geoCache[key])
         this.sendSocketNotification('IMAGE_GEO_RESULT', {
           key,
           lat,
@@ -428,7 +428,7 @@ module.exports = NodeHelper.create({
             });
           })
           .catch(error => {
-            Log.debug("Error with geo request" + error)
+            Log.error("Error with geo request" + error)
             this.sendSocketNotification('IMAGE_GEO_RESULT', {
               key,
               lat,
