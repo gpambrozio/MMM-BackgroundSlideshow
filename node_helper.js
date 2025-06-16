@@ -21,6 +21,7 @@ const Log = require('../../js/logger.js');
 const basePath = '/images/';
 const sharp = require('sharp');
 const path = require('path');
+const fs = require('fs');
 
 // the main module helper create
 module.exports = NodeHelper.create({
@@ -35,6 +36,52 @@ module.exports = NodeHelper.create({
     this.index = 0;
     this.timer = null;
     self = this;
+
+    this.cacheFilePath = path.resolve(__dirname, 'geoCache.json');
+    this.geoCache = {};
+
+    // Load cache on startup if file exists
+    this.loadCache();
+  },
+
+  loadCache() {
+    try {
+      if (fs.existsSync(this.cacheFilePath)) {
+        const content = fs.readFileSync(this.cacheFilePath, 'utf-8');
+        this.geoCache = JSON.parse(content);
+        Log.info('Geo cache loaded');
+      }
+    } catch (e) {
+      Log.warn('Failed to load geo cache:', e);
+      this.geoCache = {};
+    }
+  },
+
+  saveCache() {
+    try {
+      fs.writeFileSync(this.cacheFilePath, JSON.stringify(this.geoCache, null, 2), 'utf-8');
+      Log.debug('Geo cache saved');
+    } catch (e) {
+      Log.warn('Failed to save geo cache:', e);
+    }
+  },
+
+  async fetchReverseGeocode(lat, lon) {
+    Log.debug("Fetching geocode")
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'MyApp/1.0 (rgroppa@gmail.com)'
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Reverse geocode failed: ${response.statusText}`);
+    }
+    const data = await response.json();
+    Log.debug(data)
+    let name = data.name || data.neighbourhood || data.display_name.substring(0, 24) || '';
+    Log.debug("Returning " + name)
+    return name;
   },
 
   // shuffles an array at random and returns it
@@ -307,7 +354,7 @@ module.exports = NodeHelper.create({
     if (this.config.resizeImages) {
       this.resizeImage(filepath, callback);
     } else {
-      Log.log('resizeImages: false');
+      Log.debug('resizeImages: false');
       // const data = FileSystemImageSlideshow.readFileSync(filepath, { encoding: 'base64' });
       // callback(`data:image/${ext};base64, ${data}`);
       const chunks = [];
@@ -323,7 +370,7 @@ module.exports = NodeHelper.create({
           Log.error('Error reading file:', err);
         })
         .on('close', () => {
-          Log.log('Stream closed.');
+          Log.debug('Stream closed.');
         });
     }
   },
@@ -355,7 +402,42 @@ module.exports = NodeHelper.create({
 
   // subclass socketNotificationReceived, received notification from module
   socketNotificationReceived (notification, payload) {
-    if (notification === 'BACKGROUNDSLIDESHOW_REGISTER_CONFIG') {
+    if (notification === 'IMAGE_GEO_REQUEST') {
+      const { key, lat, lon } = payload;
+      Log.debug("Received request for geo location")
+      Log.debug(payload)
+      if (this.geoCache[key]) {
+        Log.debug("Returned cached results " + this.geoCache[key])
+        this.sendSocketNotification('IMAGE_GEO_RESULT', {
+          key,
+          lat,
+          lon,
+          location: this.geoCache[key]
+        });
+      } else {
+        this.fetchReverseGeocode(lat, lon)
+          .then(location => {
+            Log.debug("Sending geo request")
+            this.geoCache[key] = location;
+            this.saveCache();
+            this.sendSocketNotification('IMAGE_GEO_RESULT', {
+              key,
+              lat,
+              lon,
+              location
+            });
+          })
+          .catch(error => {
+            Log.error("Error with geo request" + error)
+            this.sendSocketNotification('IMAGE_GEO_RESULT', {
+              key,
+              lat,
+              lon,
+              error: error.message
+            });
+          });
+      }
+    } else if (notification === 'BACKGROUNDSLIDESHOW_REGISTER_CONFIG') {
       const config = payload;
       this.expressInstance.use(
         basePath + config.imagePaths[0],
