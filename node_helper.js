@@ -82,7 +82,7 @@ module.exports = NodeHelper.create({
     const city = data.address.city || data.address.town || data.address.count || '';
     const state = data.address.state || data.address.region || data.address.province || '';
     const country = data.address.country || '';
-    if (country === 'United States of America') {
+    if (data.address.country_code === 'us') {
       // If the country is USA, we want to return the state and city
       const name = `${city}, ${state}`;
       Log.debug("Returning " + name)
