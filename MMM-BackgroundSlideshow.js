@@ -634,6 +634,7 @@ Module.register('MMM-BackgroundSlideshow', {
           break;
         case 'geo':
           try {
+            Log.info(`Image ${imageName} will fetch geo location`);
             const lat = EXIF.getTag(imageinfo.image, 'GPSLatitude');
             const latRef = EXIF.getTag(imageinfo.image, 'GPSLatitudeRef');
             const lon = EXIF.getTag(imageinfo.image, 'GPSLongitude');
