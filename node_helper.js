@@ -79,7 +79,17 @@ module.exports = NodeHelper.create({
     }
     const data = await response.json();
     Log.info(data)
-    let name = data.name || data.neighbourhood || data.display_name || '';
+    const keys = [
+      'county',
+      'state',
+      'country',
+    ]
+    let name = keys.reduce((acc, key) => {
+      if (data.address && data.address[key]) {
+        acc += `${data.address[key]}, `;
+      }
+      return acc;
+    }, '').slice(0, -2); // Remove trailing comma and space
     Log.debug("Returning " + name)
     return name;
   },
