@@ -79,20 +79,20 @@ module.exports = NodeHelper.create({
     }
     const data = await response.json();
     Log.info(data)
-    const city = data.address.city || data.address.town || data.address.count || '';
+    const city = data.address.city || data.address.town || data.address.county || '';
     const state = data.address.state || data.address.region || data.address.province || '';
-    const country = data.address.country || '';
+    let country = data.address.country || '';
+
+    // If country is US, don't show country in output
     if (data.address.country_code === 'us') {
-      // If the country is USA, we want to return the state and city
-      const name = `${city}, ${state}`;
-      Log.debug("Returning " + name)
-      return name;
-    } else {
-      // For other countries, we return the city and country
-      const name = `${city}, ${state}, ${country}`;
-      Log.debug("Returning " + name)
-      return name;
+      country = '';
     }
+
+    // Build array and filter out empty values, then join with comma
+    const parts = [city, state, country].filter(Boolean);
+    const name = parts.join(', ');
+    Log.debug("Returning " + name)
+    return name;
   },
 
   // shuffles an array at random and returns it
