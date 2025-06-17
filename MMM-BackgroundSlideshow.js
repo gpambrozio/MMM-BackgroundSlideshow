@@ -638,6 +638,7 @@ Module.register('MMM-BackgroundSlideshow', {
             const latRef = EXIF.getTag(imageinfo.image, 'GPSLatitudeRef');
             const lon = EXIF.getTag(imageinfo.image, 'GPSLongitude');
             const lonRef = EXIF.getTag(imageinfo.image, 'GPSLongitudeRef');
+            Log.info(`Image ${imageName} will fetch geo location for lat: ${lat}, latRef: ${latRef}, lon: ${lon}, lonRef: ${lonRef}`);
             if (lat && latRef && lon && lonRef) {
               const latitude = this.gpsToDecimal(lat, latRef).toFixed(3);
               const longitude = this.gpsToDecimal(lon, lonRef).toFixed(3);
