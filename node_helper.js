@@ -79,19 +79,20 @@ module.exports = NodeHelper.create({
     }
     const data = await response.json();
     Log.info(data)
-    const keys = [
-      'county',
-      'state',
-      'country',
-    ]
-    let name = keys.reduce((acc, key) => {
-      if (data.address && data.address[key]) {
-        acc += `${data.address[key]}, `;
-      }
-      return acc;
-    }, '').slice(0, -2); // Remove trailing comma and space
-    Log.debug("Returning " + name)
-    return name;
+    const city = data.address.city || data.address.town || data.address.count || '';
+    const state = data.address.state || data.address.region || data.address.province || '';
+    const country = data.address.country || '';
+    if (country === 'United States of America') {
+      // If the country is USA, we want to return the state and city
+      const name = `${city}, ${state}`;
+      Log.debug("Returning " + name)
+      return name;
+    } else {
+      // For other countries, we return the city and country
+      const name = `${city}, ${state}, ${country}`;
+      Log.debug("Returning " + name)
+      return name;
+    }
   },
 
   // shuffles an array at random and returns it
