@@ -116,7 +116,7 @@ Module.register('MMM-BackgroundSlideshow', {
     // this.errorMessage = null;
 
     // validate imageinfo property.  This will make sure we have at least 1 valid value
-    const imageInfoRegex = /\bname\b|\bdate\b/giu;
+    const imageInfoRegex = /\bname\b|\bdate\b|\bgeo\b/giu;
     if (
       this.config.showImageInfo && !imageInfoRegex.test(this.config.imageInfo)
     ) {
