@@ -221,7 +221,7 @@ module.exports = NodeHelper.create({
 	  ? this.imageList.filter(image => !this.alreadyShownSet.has(image.path))
 		: this.imageList;
 
-	Log.info(`skipped ${this.imageList.length - imageListToUse.length} files since allready seen!`)
+	Log.info(`skipped ${this.imageList.length - imageListToUse.length} files since already seen!`)
 	this.imageList = config.randomizeImageOrder
 	  ? this.shuffleArray(imageListToUse)
 	  : this.sortImageList(

@@ -132,7 +132,7 @@ Module.register('MMM-BackgroundSlideshow', {
         .split(',');
       // now filter the array to only those that have values
       this.config.imageInfo = this.config.imageInfo.filter((n) => n);
-      Log.info(`MMM-BackgroundSlideshow: imageInfo is set to ${this.config.imageInfo.join(', ')}`);
+      Log.info(`BACKGROUNDSLIDESHOW: imageInfo is set to ${this.config.imageInfo.join(', ')}`);
     }
 
     if (!this.config.transitionImages) {
@@ -599,7 +599,7 @@ Module.register('MMM-BackgroundSlideshow', {
 
   updateImageInfo(imageinfo, imageDate) {
     const imageProps = [];
-    Log.info(`MMM-BackgroundSlideshow: imageInfo for ${imageName} is set to ${this.config.imageInfo.join(', ')}`);
+    Log.warn(`BACKGROUNDSLIDESHOW: imageInfo for ${imageName} is set to ${this.config.imageInfo.join(', ')}`);
     for (const prop of this.config.imageInfo) {
       switch (prop) {
         case 'date':
