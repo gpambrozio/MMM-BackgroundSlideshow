@@ -599,7 +599,6 @@ Module.register('MMM-BackgroundSlideshow', {
 
   updateImageInfo(imageinfo, imageDate) {
     const imageProps = [];
-    Log.warn(`BACKGROUNDSLIDESHOW: imageInfo for ${imageName} is set to ${this.config.imageInfo.join(', ')}`);
     for (const prop of this.config.imageInfo) {
       switch (prop) {
         case 'date':
@@ -636,6 +635,7 @@ Module.register('MMM-BackgroundSlideshow', {
           break;
         case 'geo':
           try {
+            let imageName = imageinfo.path.split('/').pop();
             Log.info(`Image ${imageName} will fetch geo location`);
             const lat = EXIF.getTag(imageinfo.image, 'GPSLatitude');
             const latRef = EXIF.getTag(imageinfo.image, 'GPSLatitudeRef');
