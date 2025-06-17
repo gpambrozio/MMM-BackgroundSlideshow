@@ -79,7 +79,7 @@ module.exports = NodeHelper.create({
     }
     const data = await response.json();
     Log.debug(data)
-    let name = data.name || data.neighbourhood || data.display_name.substring(0, 24) || '';
+    let name = data.name || data.neighbourhood || data.display_name || '';
     Log.debug("Returning " + name)
     return name;
   },
