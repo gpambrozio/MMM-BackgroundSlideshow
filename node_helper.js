@@ -78,7 +78,7 @@ module.exports = NodeHelper.create({
       throw new Error(`Reverse geocode failed: ${response.statusText}`);
     }
     const data = await response.json();
-    Log.debug(data)
+    Log.info(data)
     let name = data.name || data.neighbourhood || data.display_name || '';
     Log.debug("Returning " + name)
     return name;
