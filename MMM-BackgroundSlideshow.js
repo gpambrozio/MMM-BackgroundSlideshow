@@ -132,7 +132,6 @@ Module.register('MMM-BackgroundSlideshow', {
         .split(',');
       // now filter the array to only those that have values
       this.config.imageInfo = this.config.imageInfo.filter((n) => n);
-      Log.info(`BACKGROUNDSLIDESHOW: imageInfo is set to ${this.config.imageInfo.join(', ')}`);
     }
 
     if (!this.config.transitionImages) {
@@ -636,12 +635,10 @@ Module.register('MMM-BackgroundSlideshow', {
         case 'geo':
           try {
             let imageName = imageinfo.path.split('/').pop();
-            Log.info(`Image ${imageName} will fetch geo location`);
             const lat = EXIF.getTag(imageinfo.image, 'GPSLatitude');
             const latRef = EXIF.getTag(imageinfo.image, 'GPSLatitudeRef');
             const lon = EXIF.getTag(imageinfo.image, 'GPSLongitude');
             const lonRef = EXIF.getTag(imageinfo.image, 'GPSLongitudeRef');
-            Log.info(`Image ${imageName} will fetch geo location for lat: ${lat}, latRef: ${latRef}, lon: ${lon}, lonRef: ${lonRef}`);
             if (lat && latRef && lon && lonRef) {
               const latitude = this.gpsToDecimal(lat, latRef).toFixed(3);
               const longitude = this.gpsToDecimal(lon, lonRef).toFixed(3);
