@@ -692,6 +692,7 @@ Module.register('MMM-BackgroundSlideshow', {
   requestLocationForImage(lat, lon) {
     const key = `${lat},${lon}`;
     this.sendSocketNotification('IMAGE_GEO_REQUEST', { key, lat, lon });
+    this.sendNotification('IMAGE_GEO_CHANGED', { key, lat, lon });
   },
 
   resume() {
